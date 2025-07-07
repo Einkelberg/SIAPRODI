@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mt-4">
     <div class="card">
-        <div class="card-header bg-warning text-white">
+        <div class="card-header bg-dark text-white">
             <h5 class="mb-0">Edit SK Wisuda</h5>
         </div>
         <div class="card-body">

@@ -59,9 +59,9 @@ class WisudaController extends Controller
     }
 
     // fungsi untuk cari
-    public function searchPreview(Request $request) 
+    public function searchPreview(Request $request)
     {
-        $search = $request->input('search'); 
+        $search = $request->input('search');
         $rekapitulasi = [];
 
         if (!empty($search)) {
@@ -69,7 +69,7 @@ class WisudaController extends Controller
                 $query->whereHas('sk', function ($q) use ($search) {
                     $q->where('tahun_wisuda', 'LIKE', '%' . $search . '%');
                 });
-            })->get(); 
+            })->get();
         } else {
             $wisuda = WisudaModel::all();
         }
@@ -79,7 +79,7 @@ class WisudaController extends Controller
             if (!isset($rekapitulasi[$tahun])) {
                 $rekapitulasi[$tahun] = 0;
             }
-            
+
             if ($item->status_wisuda === 'Sudah Wisuda') {
                 $rekapitulasi[$tahun]++;
             }
@@ -117,13 +117,13 @@ class WisudaController extends Controller
     public function create()
     {
         // Ambil semua NIM yang sudah ada di tabel wisuda
-         $nimTerdaftar = WisudaModel::pluck('nim')->toArray();
+        $nimTerdaftar = WisudaModel::pluck('nim')->toArray();
 
         // Ambil mahasiswa yang belum ada di tabel wisuda
         $mahasiswa = MahasiswaModel::whereNotIn('nim', $nimTerdaftar)->get();
 
         // Ambil data tahun wisuda
-        $tahun_wisuda = TahunWisudaModel::all(); 
+        $tahun_wisuda = TahunWisudaModel::all();
 
         return view('admin.wissuda.create', compact('mahasiswa', 'tahun_wisuda'));
     }
@@ -138,10 +138,13 @@ class WisudaController extends Controller
 
         $request->validate([
             'nim' => 'required|exists:mahasiswa,nim',
+            'semester' => 'required|numeric',
             'status_wisuda' => 'required|string|max:50',
             'tahun_wisuda_id' => $isSudahWisuda ? 'required|exists:tahun_wisuda,id' : 'nullable'
         ], [
             'nim.required' => 'Mahasiswa tidak boleh kosong.',
+            'semester.required' => 'Semester tidak boleh kosong.',
+            'semester.numeric' => 'Semester harus berupa angka.',
             'status_wisuda.required' => 'Status wisuda tidak boleh kosong.',
             'tahun_wisuda_id.required' => 'Tahun Wisuda tidak boleh kosong jika sudah wisuda.',
             'tahun_wisuda_id.exists' => 'Tahun Wisuda yang dipilih tidak valid.'
@@ -149,10 +152,10 @@ class WisudaController extends Controller
 
         WisudaModel::create([
             'nim' => $request->nim,
+            'semester' => $request->semester,
             'status_wisuda' => $request->status_wisuda,
             'tahun_wisuda_id' => $isSudahWisuda ? $request->tahun_wisuda_id : null,
         ]);
-
         DB::table('mahasiswa')->where('nim', $request->nim)->update([
             'status_aktif' => $isSudahWisuda ? 'Lulus' : 'Aktif'
         ]);
@@ -161,7 +164,8 @@ class WisudaController extends Controller
         return redirect('/wissuda');
     }
 
-    
+
+
     /**
      * Display the specified resource.(Dita)
      */
@@ -173,7 +177,7 @@ class WisudaController extends Controller
         // Cari data mahasiswa berdasarkan nim di tabel wisuda
         $mahasiswa = MahasiswaModel::where('nim', $wisuda->nim)->firstOrFail();
 
-        
+
 
         return view('admin.wissuda.detail', compact('wisuda', 'mahasiswa'));
     }
@@ -181,12 +185,17 @@ class WisudaController extends Controller
     /**
      * Show the form for editing the specified resource. (Dita)
      */
-    public function edit(string $id)
+    public function edit($id)
     {
         $wisuda = WisudaModel::findOrFail($id);
-        $tahun_wisuda = TahunWisudaModel::orderBy('tahun_wisuda', 'desc')->get();
 
-        return view('admin.wissuda.edit', compact('wisuda', 'tahun_wisuda'));
+        // Ambil semua mahasiswa (boleh semua atau sesuai kebutuhan)
+        $mahasiswa = MahasiswaModel::all();
+
+        // Ambil data tahun wisuda
+        $tahun_wisuda = TahunWisudaModel::all();
+
+        return view('admin.wissuda.edit', compact('wisuda', 'mahasiswa', 'tahun_wisuda'));
     }
 
     /**
@@ -195,32 +204,37 @@ class WisudaController extends Controller
     public function update(Request $request, string $id)
     {
         $wisuda = WisudaModel::findOrFail($id);
+
         $isSudahWisuda = $request->status_wisuda === 'Sudah Wisuda';
 
         $request->validate([
+            'nim' => 'required|exists:mahasiswa,nim',
+            'semester' => 'required|integer|min:1|max:14',
             'status_wisuda' => 'required|string|max:50',
-            'tahun_wisuda_id' => $isSudahWisuda ? 'required|exists:tahun_wisuda,id' : 'nullable'],
-            [
+            'tahun_wisuda_id' => $isSudahWisuda ? 'required|exists:tahun_wisuda,id' : 'nullable'
+        ], [
+            'nim.required' => 'Mahasiswa tidak boleh kosong.',
+            'semester.required' => 'Semester tidak boleh kosong.',
+            'semester.integer' => 'Semester harus berupa angka.',
             'status_wisuda.required' => 'Status wisuda tidak boleh kosong.',
             'tahun_wisuda_id.required' => 'Tahun Wisuda tidak boleh kosong jika sudah wisuda.',
             'tahun_wisuda_id.exists' => 'Tahun Wisuda yang dipilih tidak valid.'
         ]);
 
-       // Menentukan nilai tahun_wisuda_id
-        $skId = $isSudahWisuda ? $request->tahun_wisuda_id : null;
-
-        // Update Data Wisuda
         $wisuda->update([
+            'nim' => $request->nim,
+            'semester' => $request->semester,
             'status_wisuda' => $request->status_wisuda,
-            'tahun_wisuda_id' => $skId,
+            'tahun_wisuda_id' => $isSudahWisuda ? $request->tahun_wisuda_id : null,
         ]);
 
-        // Update Status Mahasiswa di Tabel `mahasiswa`
-        DB::table('mahasiswa')->where('nim', $wisuda->nim)->update([
+        // Update juga status mahasiswa
+        DB::table('mahasiswa')->where('nim', $request->nim)->update([
             'status_aktif' => $isSudahWisuda ? 'Lulus' : 'Aktif'
         ]);
 
-        return redirect('/wissuda')->with('success', 'Data wisuda berhasil diperbarui.');
+        session()->flash('success', 'Data wisuda berhasil diperbarui.');
+        return redirect('/wissuda');
     }
 
     /**
@@ -249,7 +263,7 @@ class WisudaController extends Controller
     public function search(Request $request)
     {
         $search = $request->input('search');
-        
+
         if (!empty($search)) {
             $wisuda = WisudaModel::when($search, function ($query) use ($search) {
                 $query->whereHas('sk', function ($q) use ($search) {
@@ -294,7 +308,7 @@ class WisudaController extends Controller
         return $xlsx->downloadAs('data-wisuda.xlsx');
     }
 
-     //fungsi cetak wisuda
+    //fungsi cetak wisuda
     public function cetakWisuda()
     {
         $wisuda = session()->get('wisuda_data', Wisuda::all());
@@ -311,11 +325,10 @@ class WisudaController extends Controller
                 ];
             }
         }
-        
+
         return view('laporan.hasil', compact('wisuda', 'rekapitulasi'));
-        
     }
-    
+
 
     public function exportpdf()
     {
@@ -340,5 +353,4 @@ class WisudaController extends Controller
         $pdf = PDF::loadView('laporan.hasil', compact('wisuda', 'rekapitulasi'));
         return $pdf->download('wisuda-' . Carbon::now()->timestamp . '.pdf');
     }
-    
 }

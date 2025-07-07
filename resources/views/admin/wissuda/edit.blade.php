@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mt-4">
     <div class="card">
-        <div class="card-header bg-warning text-white">
+        <div class="card-header bg-dark text-white">
             <h5 class="mb-0">Edit Data Wisuda</h5>
         </div>
         <div class="card-body">
@@ -19,6 +19,15 @@
                         </option>
                     </select>
                     <input type="hidden" name="nim" value="{{ $wisuda->nim }}"> 
+                </div>
+
+                <div class="mb-3">
+                    <label for="semester" class="form-label">Semester</label>
+                    <input type="number" class="form-control" id="semester" name="semester"
+                        value="{{ old('semester', $wisuda->semester) }}">
+                    @error('semester')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
@@ -51,24 +60,6 @@
                     @enderror
                 </div>
 
-
-                {{-- <div class="mb-3">
-                    <label for="tahun_wisuda_id" class="form-label">Tahun Wisuda</label>
-                    <select class="form-control" id="tahun_wisuda_id" name="tahun_wisuda_id"
-                        {{ $wisuda->status_wisuda == 'Belum Wisuda' ? 'disabled' : '' }}>
-                        <option value="">Pilih Tahun Wisuda</option>
-                        @foreach($tahun_wisuda as $tahun)
-                            <option value="{{ $tahun->id }}" 
-                                {{ $wisuda->tahun_wisuda_id == $tahun->id ? 'selected' : '' }}>
-                                {{ $tahun->tahun_wisuda }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('tahun_wisuda_id')
-                        <small class="text-danger">{{ $message }}</small>
-                    @enderror
-                </div> --}}
-
                 <button type="submit" class="btn btn-warning text-white">Update</button>
                 <a href="/wissuda" class="btn btn-secondary">Batal</a>
             </form>
@@ -76,35 +67,6 @@
     </div>
 </div>
 
-{{-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const statusWisudaInputs = document.querySelectorAll('input[name="status_wisuda"]');
-        const tahunWisudaSelect = document.getElementById('tahun_wisuda_id');
-
-        let originalTahunWisuda = tahunWisudaSelect.value; // Simpan nilai awal
-
-        function updateForm() {
-            if (document.getElementById('belum_wisuda').checked) {
-                // Simpan nilai sebelum dihapus
-                if (tahunWisudaSelect.value) {
-                    originalTahunWisuda = tahunWisudaSelect.value;
-                }
-                tahunWisudaSelect.value = ''; // Kosongkan
-                tahunWisudaSelect.setAttribute('disabled', true);
-            } else {
-                tahunWisudaSelect.removeAttribute('disabled');
-                tahunWisudaSelect.value = originalTahunWisuda; // Kembalikan nilai sebelumnya
-            }
-        }
-
-        // Tambahkan event listener ke radio button
-        statusWisudaInputs.forEach(input => {
-            input.addEventListener('change', updateForm);
-        });
-
-        updateForm(); // Jalankan saat halaman dimuat
-    });
-</script> --}}
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
