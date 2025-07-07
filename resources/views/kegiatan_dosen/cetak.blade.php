@@ -24,11 +24,11 @@
             <tr>
                 <th>NIDN</th>
                 <th>Nama Dosen</th>
+                <th>Nomor SK</th>
                 <th>Jenis Kegiatan</th>
                 <th>Lokasi Kegiatan</th>
                 <th>Tanggal Mulai</th>
                 <th>Tanggal Selesai</th>
-                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
@@ -36,11 +36,11 @@
                                         <tr class="text-center">
                                             <td>{{ $kds->dosen?->nidn }}</td>
                                             <td>{{ $kds->dosen?->nama_dosen }}</td>
+                                            <td>{{ $kds->nomor_sk }}</td>
                                             <td>{{ $kds->jenis_kegiatan }}</td>
                                             <td>{{ $kds->lokasi_kegiatan }}</td>
                                             <td>{{ date('d-m-Y', strtotime($kds->tgl_mulai)) }}</td>
                                             <td>{{ date('d-m-Y', strtotime($kds->tgl_selesai)) }}</td>
-                                            <td>{{ $kds->keterangan }}</td>
             </tr>
             @endforeach
         </tbody>

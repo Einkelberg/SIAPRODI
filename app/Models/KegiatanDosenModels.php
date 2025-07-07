@@ -17,14 +17,15 @@ class KegiatanDosenModels extends Model
         'jenis_kegiatan',
         'tgl_mulai',
         'tgl_selesai',
+        'nomor_sk',
         'file_sk',
         'keterangan',
     ];
-    
+
     public $timestamps = false;
 
     public function dosen()
     {
-        return $this->belongsTo(DosenModels::class, 'nidn' , 'nidn');
+        return $this->belongsTo(DosenModels::class, 'nidn', 'nidn');
     }
 }

@@ -45,6 +45,11 @@
                                         <label class="form-label">Lokasi Kegiatan</label>
                                         <input type="text" name="lokasi_kegiatan" class="form-control" value="{{ $kegiatan_dosen->lokasi_kegiatan }}" required>
                                     </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Nomor SK</label>
+                                        <input type="text" name="nomor_sk" class="form-control" value="{{ $kegiatan_dosen->nomor_sk }}" required>
+                                    </div>
                                 </div>
 
                                 <div class="col-md-6">
@@ -62,7 +67,7 @@
                                         <label class="form-label">File SK (Surat Keputusan)</label>
                                         <input type="file" name="file_sk" class="form-control">
                                         @if ($kegiatan_dosen->file_sk)
-                                            <p class="mt-2">File saat ini: 
+                                            <p class="mt-2">File saat ini:
                                                 <a href="{{ asset('storage/' . $kegiatan_dosen->file_sk) }}" target="_blank">Lihat SK</a>
                                             </p>
                                         @endif

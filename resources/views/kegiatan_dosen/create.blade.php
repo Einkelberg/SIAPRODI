@@ -20,7 +20,7 @@
                     <div class="card-body">
                         <form action="{{ route('kegiatan_dosen.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -41,6 +41,11 @@
                                     <div class="mb-3">
                                         <label class="form-label">Lokasi Kegiatan</label>
                                         <input type="text" name="lokasi_kegiatan" class="form-control" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Nomor SK</label>
+                                        <input type="text" name="nomor_sk" class="form-control" placeholder="Contoh : SK/001/TI/2025" required>
                                     </div>
                                 </div>
 

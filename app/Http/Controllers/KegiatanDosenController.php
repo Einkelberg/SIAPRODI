@@ -12,7 +12,7 @@ class KegiatanDosenController extends Controller
 {
     public function index(Request $request)
     {
-        $kegiatan = KegiatanDosenModels::with ('dosen')->get();
+        $kegiatan = KegiatanDosenModels::with('dosen')->get();
         return view('kegiatan_dosen.index', ['kegiatan_dosen' => $kegiatan]);
     }
 
@@ -20,7 +20,7 @@ class KegiatanDosenController extends Controller
     {
         $dosen = DosenModels::all();
         $kegiatan = KegiatanDosenModels::all();
-        return view('kegiatan_dosen.create' , compact('dosen' , 'kegiatan'));
+        return view('kegiatan_dosen.create', compact('dosen', 'kegiatan'));
     }
 
     public function store(Request $request)
@@ -52,7 +52,7 @@ class KegiatanDosenController extends Controller
             'keterangan' => $request->keterangan ?? '-',
         ]);
 
-        return redirect()->route('kegiatan_dosen.index')->with('sukses', 'Data berhasil ditambahkan!');
+        return redirect()->route('kegiatan_dosen.index')->with('success', 'Data berhasil ditambahkan!');
     }
 
     public function edit($id_kegiatan_dosen)
@@ -82,15 +82,15 @@ class KegiatanDosenController extends Controller
         $kegiatan->tgl_mulai = $request->tgl_mulai;
         $kegiatan->tgl_selesai = $request->tgl_selesai;
         $kegiatan->nomor_sk = $request->nomor_sk;
-        $kegiatan ->keterangan = $request->keterangan;
-        $kegiatan ->file_sk = $kegiatan->file_sk;
+        $kegiatan->keterangan = $request->keterangan;
+        $kegiatan->file_sk = $kegiatan->file_sk;
 
         // Cek apakah ada file yang diupload
         if ($request->hasFile('file_sk')) {
 
-        // Simpan file baru ke storage
-        $dokumenPath = $request->file('file_sk')->store('public/upload_file_sk');
-        $kegiatan->file_sk = str_replace('public/', '', $dokumenPath);
+            // Simpan file baru ke storage
+            $dokumenPath = $request->file('file_sk')->store('public/upload_file_sk');
+            $kegiatan->file_sk = str_replace('public/', '', $dokumenPath);
         }
 
         $kegiatan->update([
@@ -104,7 +104,7 @@ class KegiatanDosenController extends Controller
             'file_sk' => $kegiatan->file_sk,
         ]);
 
-        return redirect()->route('kegiatan_dosen.index')->with('sukses', 'Data berhasil diperbarui!');
+        return redirect()->route('kegiatan_dosen.index')->with('success', 'Data berhasil diperbarui!');
     }
 
     public function destroy($id_kegiatan_dosen)
@@ -112,7 +112,7 @@ class KegiatanDosenController extends Controller
         $kegiatan = KegiatanDosenModels::FindOrFail($id_kegiatan_dosen);
         $kegiatan->delete();
 
-        return redirect()->route('kegiatan_dosen.index')->with('sukses', 'Data berhasil dihapus!');
+        return redirect()->route('kegiatan_dosen.index')->with('success', 'Data berhasil dihapus!');
     }
 
     public function search(Request $request)
@@ -143,7 +143,8 @@ class KegiatanDosenController extends Controller
             // Tangani error dan kembalikan response dengan pesan error
             return redirect()->back()->with('error', 'Terjadi kesalahan saat membuat PDF: ' . $e->getMessage());
         }
-    }   public function cetakkegiatan()
+    }
+    public function cetakkegiatan()
     {
         $kegiatan = KegiatanDosenModels::all();
         return view('kegiatan_dosen.cetak', ['kegiatan_dosen' => $kegiatan]);
