@@ -11,23 +11,14 @@ class Pkm extends Model
     public $timestamps = false; // Tambahkan jika tidak menggunakan timestamps
 
     protected $fillable = [
-        'nidn',
-        'nim',
         'judul',
         'tahun',
         'lokasi',
         'anggaran',
         'status',
+        'nama_dosen',
+        'nidn',
+        'nama_mahasiswa',
+        'nim',
     ];
-
-    // Relasi ke tabel Dosen
-    public function dosen()
-    {
-        return $this->belongsTo(Dosen::class, 'nidn', 'nidn');
-    }
-
-    public function mahasiswa()
-{
-    return $this->belongsTo(Mahasiswa::class, 'nim', 'nim');
-}
 }

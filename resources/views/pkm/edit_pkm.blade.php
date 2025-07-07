@@ -5,9 +5,7 @@
     <h3 class="mb-3">Edit Data PKM</h3>
 
     @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+        <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
     <div class="card">
@@ -16,101 +14,123 @@
                 @csrf
                 @method('PUT')
 
-                <div class="mb-3">
-                    <label for="nidn" class="form-label">NIDN</label>
-                    <select class="form-control @error('nidn') is-invalid @enderror" disabled ="nidn" id="nidn" required>
-                        <option value="">Pilih Dosen</option>
-                        @foreach($dosen as $d)
-                            <option value="{{ $d->nidn }}" data-nama="{{ $d->nama_dosen }}" {{ $pkm->nidn == $d->nidn ? 'selected' : '' }}>
-                                {{ $d->nidn }} - {{ $d->nama_dosen }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <input type="hidden" name="nidn" value="{{$pkm->nidn}}">
-                    @error('nidn')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="row">
+                    {{-- Kolom Kiri --}}
+                    <div class="col-md-6">
+                        {{-- Dosen --}}
+                        <div class="mb-3">
+                            <label class="form-label">Dosen</label>
+                            <div id="dosen-container">
+                                @php
+                                    $dosenList = isset($pkm) ? explode(',', $pkm->nama_dosen) : [''];
+                                    $nidnList = isset($pkm) ? explode(',', $pkm->nidn) : [''];
+                                @endphp
+                                @foreach($dosenList as $i => $dosen)
+                                    <div class="input-group mb-2">
+                                        <input type="text" name="nama_dosen[]" class="form-control me-2" value="{{ old('nama_dosen.' . $i, trim($dosen)) }}" placeholder="Nama Dosen">
+                                        <input type="text" name="nidn[]" class="form-control me-2" value="{{ old('nidn.' . $i, trim($nidnList[$i] ?? '')) }}" placeholder="NIDN">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="hapusElemen(this)">❌</button>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <button type="button" class="btn btn-sm btn-success" onclick="tambahDosen()">+ Tambah Dosen</button>
+                        </div>
+
+                        {{-- Mahasiswa --}}
+                        <div class="mb-3">
+                            <label class="form-label">Mahasiswa</label>
+                            <div id="mahasiswa-container">
+                                @php
+                                    $mhsList = isset($pkm) ? explode(',', $pkm->nama_mahasiswa) : [''];
+                                    $nimList = isset($pkm) ? explode(',', $pkm->nim) : [''];
+                                @endphp
+                                @foreach($mhsList as $i => $mhs)
+                                    <div class="input-group mb-2">
+                                        <input type="text" name="nama_mahasiswa[]" class="form-control me-2" value="{{ old('nama_mahasiswa.' . $i, trim($mhs)) }}" placeholder="Nama Mahasiswa">
+                                        <input type="text" name="nim[]" class="form-control me-2" value="{{ old('nim.' . $i, trim($nimList[$i] ?? '')) }}" placeholder="NIM">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="hapusElemen(this)">❌</button>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <button type="button" class="btn btn-sm btn-success" onclick="tambahMahasiswa()">+ Tambah Mahasiswa</button>
+                        </div>
+                    </div>
+
+                    {{-- Kolom Kanan --}}
+                    <div class="col-md-6">
+                        {{-- Judul --}}
+                        <div class="mb-3">
+                            <label for="judul" class="form-label">Judul</label>
+                            <input type="text" name="judul" class="form-control" value="{{ $pkm->judul }}" required>
+                        </div>
+
+                        {{-- Tahun --}}
+                        <div class="mb-3">
+                            <label for="tahun" class="form-label">Tahun</label>
+                            <input type="number" name="tahun" class="form-control" min="2000" max="{{ date('Y') }}" value="{{ $pkm->tahun }}" required>
+                        </div>
+
+                        {{-- Lokasi --}}
+                        <div class="mb-3">
+                            <label for="lokasi" class="form-label">Lokasi</label>
+                            <input type="text" name="lokasi" class="form-control" value="{{ $pkm->lokasi }}" required>
+                        </div>
+
+                        {{-- Anggaran --}}
+                        <div class="mb-3">
+                            <label for="anggaran" class="form-label">Anggaran</label>
+                            <input type="number" name="anggaran" class="form-control" min="0" step="1000" value="{{ $pkm->anggaran }}" required>
+                        </div>
+
+                        {{-- Status --}}
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select name="status" class="form-control" required>
+                                <option value="">Pilih Status</option>
+                                <option value="Dalam Proses" {{ $pkm->status == 'Dalam Proses' ? 'selected' : '' }}>Dalam Proses</option>
+                                <option value="Selesai" {{ $pkm->status == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                                <option value="Dibatalkan" {{ $pkm->status == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- <div class="mb-3">
-                    <label for="nama_dosen" class="form-label">Nama Dosen</label>
-                    <input type="text" class="form-control" id="nama_dosen" value="{{ $pkm->nama_dosen }}" disabled>
-                </div> -->
-
-                <div class="mb-3">
-                    <label for="nim" class="form-label">NIM</label>
-                    <select class="form-control @error('nim') is-invalid @enderror" disabled name="nim" id="nim" required>
-                        <option value="">Pilih Mahasiswa</option>
-                        @foreach($mahasiswa as $m)
-                            <option value="{{ $m->nim }}" data-nama="{{ $m->nama_mahasiswa }}" {{ $pkm->nim == $m->nim ? 'selected' : '' }}>
-                                {{ $m->nim }} - {{ $m->nama_mahasiswa }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <input type="hidden" name="nim" value="{{$pkm->nim}}">
-                    @error('nim')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <a href="{{ route('pkm.index') }}" class="btn btn-secondary">Kembali</a>
                 </div>
-<!-- 
-                <div class="mb-3">
-                    <label for="nama_mahasiswa" class="form-label">Nama Mahasiswa</label>
-                    <input type="text" class="form-control" id="nama_mahasiswa" value="{{ $pkm->nama_mahasiswa }}" readonly>
-                </div> -->
-
-                <div class="mb-3">
-                    <label for="judul" class="form-label">Judul</label>
-                    <input type="text" class="form-control" name="judul" id="judul" value="{{ $pkm->judul }}" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="tahun" class="form-label">Tahun</label>
-                    <input type="number" class="form-control" name="tahun" id="tahun" value="{{ $pkm->tahun }}" min="2000" max="{{ date('Y') }}" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="lokasi" class="form-label">Lokasi</label>
-                    <input type="text" class="form-control" name="lokasi" id="lokasi" value="{{ $pkm->lokasi }}" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="anggaran" class="form-label">Anggaran</label>
-                    <input type="number" class="form-control" name="anggaran" id="anggaran" value="{{ $pkm->anggaran }}" min="0" step="1000" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="status" class="form-label">Status</label>
-                    <select class="form-control @error('status') is-invalid @enderror" name="status" id="status" required>
-                        <option value="">Pilih Status</option>
-                        <option value="Berjalan" {{ $pkm->status == 'Berjalan' ? 'selected' : '' }}>Berjalan</option>
-                        <option value="Gagal" {{ $pkm->status == 'Gagal' ? 'selected' : '' }}>Gagal</option>
-                        <option value="Sukses" {{ $pkm->status == 'Sukses' ? 'selected' : '' }}>Sukses</option>
-                    </select>
-                    @error('status')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <button type="submit" class="btn btn-primary">Update</button>
-                <!-- <a href="{{ url('/pkm') }}" class="btn btn-secondary">Kembali</a> -->
             </form>
         </div>
     </div>
 </div>
 
+{{-- Script Dinamis --}}
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("nidn").addEventListener("change", function () {
-        let selectedOption = this.options[this.selectedIndex];
-        let namaDosen = selectedOption.getAttribute("data-nama") || "";
-        document.getElementById("nama_dosen").value = namaDosen;
-    });
-    document.getElementById("nim").addEventListener("change", function () {
-        let selectedOption = this.options[this.selectedIndex];
-        let namaMahasiswa = selectedOption.getAttribute("data-nama") || "";
-        document.getElementById("nama_mahasiswa").value = namaMahasiswa;
-    });
-});
+    function tambahDosen() {
+        const container = document.getElementById('dosen-container');
+        const inputHTML = `
+            <div class="input-group mb-2">
+                <input type="text" name="nama_dosen[]" class="form-control me-2" placeholder="Nama Dosen">
+                <input type="text" name="nidn[]" class="form-control me-2" placeholder="NIDN">
+                <button type="button" class="btn btn-danger btn-sm" onclick="hapusElemen(this)">❌</button>
+            </div>`;
+        container.insertAdjacentHTML('beforeend', inputHTML);
+    }
+
+    function tambahMahasiswa() {
+        const container = document.getElementById('mahasiswa-container');
+        const inputHTML = `
+            <div class="input-group mb-2">
+                <input type="text" name="nama_mahasiswa[]" class="form-control me-2" placeholder="Nama Mahasiswa">
+                <input type="text" name="nim[]" class="form-control me-2" placeholder="NIM">
+                <button type="button" class="btn btn-danger btn-sm" onclick="hapusElemen(this)">❌</button>
+            </div>`;
+        container.insertAdjacentHTML('beforeend', inputHTML);
+    }
+
+    function hapusElemen(button) {
+        button.closest('.input-group').remove();
+    }
 </script>
 
 @endsection

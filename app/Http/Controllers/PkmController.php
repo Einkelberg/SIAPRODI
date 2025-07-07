@@ -20,22 +20,16 @@ class PkmController extends Controller
 {
     $search = $request->input('search'); // Ambil input pencarian
 
-    $pkm = DB::table('pkm')
-        ->join('dosen', 'pkm.nidn', '=', 'dosen.nidn')
-        ->join('mahasiswa', 'pkm.nim', '=', 'mahasiswa.nim')
-        ->select(
-            'pkm.*',
-            'dosen.nama_dosen as nama_dosen',
-            'mahasiswa.nama_mahasiswa as nama_mahasiswa'
-        )
-        ->when($search, function ($query, $search) {
-            return $query->where(function ($query) use ($search) {
-                $query->where('mahasiswa.nama_mahasiswa', 'like', "%$search%")
-                    ->orWhere('pkm.judul', 'like', "%$search%")
-                    ->orWhere('pkm.tahun', 'like', "%$search%");
-            });
-        })
-        ->paginate(10); // Gunakan paginate agar tidak terlalu banyak data
+   $pkm = DB::table('pkm')
+    ->when($search, function ($query, $search) {
+        return $query->where(function ($query) use ($search) {
+            $query->where('nama_mahasiswa', 'like', "%$search%")
+                ->orWhere('nama_dosen', 'like', "%$search%")
+                ->orWhere('judul', 'like', "%$search%")
+                ->orWhere('tahun', 'like', "%$search%");
+        });
+    })
+    ->paginate(10);
 
     return view('pkm.index', compact('pkm'));
 }
@@ -44,38 +38,28 @@ class PkmController extends Controller
 public function edit($id)
 {
     $pkm = Pkm::findOrFail($id);
-    $dosen = Dosen::all();
-    $mahasiswa = Mahasiswa::all();
 
-    return view('pkm.edit_pkm', compact('pkm', 'dosen', 'mahasiswa'));
+    return view('pkm.edit_pkm', compact('pkm'));
 }
 
 public function update(Request $request, $id)
 {
-    $request->validate([
-        'nidn' => 'required',
-        'nim' => 'required',
-        'judul' => 'required|string|max:255',
-        'tahun' => 'required|integer|min:2000|max:' . date('Y'),
-        'lokasi' => 'required|string|max:255',
-        'anggaran' => 'required|numeric|min:0',
-        'status' => 'required|in:Berjalan,Gagal,Sukses',
-    ]);
+   $pkm = Pkm::findOrFail($id);
 
-    $pkm = Pkm::findOrFail($id);
     $pkm->update([
-        'nidn' => $request->nidn,
-        'nama_dosen' => Dosen::where('nidn', $request->nidn)->first()->nama_dosen,
-        'nim' => $request->nim,
-        'nama_mahasiswa' => Mahasiswa::where('nim', $request->nim)->first()->nama_mahasiswa,
-        'judul' => $request->judul,
-        'tahun' => $request->tahun,
-        'lokasi' => $request->lokasi,
-        'anggaran' => $request->anggaran,
-        'status' => $request->status,
+        'judul' => $request->input('judul'),
+        'tahun' => $request->input('tahun'),
+        'lokasi' => $request->input('lokasi'),
+        'anggaran' => $request->input('anggaran'),
+        'status' => $request->input('status'),
+        'nama_dosen' => implode(',', $request->input('nama_dosen', [])),
+        'nidn' => implode(',', $request->input('nidn', [])),
+        'nama_mahasiswa' => implode(',', $request->input('nama_mahasiswa', [])),
+        'nim' => implode(',', $request->input('nim', [])),
     ]);
 
-    return redirect()->route('pkm.index')->with('success', 'Data PKM berhasil diperbarui.');
+    return redirect()->route('pkm.index')->with('success', 'Data PKM berhasil diupdate.');
+
 }
 
     public function create()
@@ -96,38 +80,50 @@ public function destroy($id)
     }
 }
 
+public function show($id)
+{
+    $pkm = Pkm::findOrFail($id); // Atau model sesuai nama
+    return view('pkm.show', compact('pkm'));
+}
+
+
     // Menyimpan data mahasiswa
     public function store(Request $request)
-    {
-        // Validasi input
-        $request->validate([
-            'nidn' => 'required|string|exists:dosen,nidn|max:20',
-            'nim' => 'required|string|exists:mahasiswa,nim|max:20',
-            'judul' => 'required|string|max:255',
-            'tahun' => 'required|integer|min:2000|max:' . date('Y'),
-            'lokasi' => 'required|string|max:255',
-            'anggaran' => 'required|numeric|min:0',
-            'status' => 'required|in:Berjalan,Gagal,Sukses',
-        ]);
+{
+    $request->validate([
+        'nama_dosen' => 'required|array|min:1',
+        'nama_dosen.*' => 'required|string|max:100',
 
-        $exists = Pkm::where('nim', $request->nim)
-                        ->exists();
+        'nidn' => 'required|array|min:1',
+        'nidn.*' => 'required|string|max:20',
 
-        if($exists){
-            return redirect()->route('pkm.create')->with('success', 'PKM tidak berhasil ditambahkan!');
-        }
+        'nama_mahasiswa' => 'required|array|min:1',
+        'nama_mahasiswa.*' => 'required|string|max:100',
 
-        // Simpan data mahasiswa ke dalam database
-        Pkm::create([
-            'nidn' => $request->nidn,
-            'nim' => $request->nim,
-            'judul' => $request->judul,
-            'tahun' => $request->tahun,
-            'lokasi' => $request->lokasi,
-            'anggaran' => $request->anggaran,
-            'status' => $request->status, 
-        ]);
-        // Redirect ke form tambah mahasiswa dengan pesan sukses
-        return redirect()->route('pkm.index')->with('success', 'PKM berhasil ditambahkan!');
-    }
+        'nim' => 'required|array|min:1',
+        'nim.*' => 'required|string|max:20',
+
+        'judul' => 'required|string|max:255',
+        'tahun' => 'required|integer|min:2000|max:' . date('Y'),
+        'lokasi' => 'required|string|max:255',
+        'anggaran' => 'required|numeric|min:0',
+        'status' => 'required|in:Dalam Proses,Selesai,Dibatalkan',
+    ]);
+
+    Pkm::create([
+        'judul' => $request->judul,
+        'tahun' => $request->tahun,
+        'lokasi' => $request->lokasi,
+        'anggaran' => $request->anggaran,
+        'status' => $request->status,
+        'nama_dosen' => implode(', ', $request->nama_dosen),
+        'nidn' => implode(', ', $request->nidn),
+        'nama_mahasiswa' => implode(', ', $request->nama_mahasiswa),
+        'nim' => implode(', ', $request->nim),
+    ]);
+
+    return redirect()->route('pkm.index')->with('success', 'PKM berhasil ditambahkan!');
+}
+
+
 }

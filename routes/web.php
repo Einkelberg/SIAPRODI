@@ -343,15 +343,20 @@ Route::get('/sk/search', [TahunWisudaController::class, 'search']);
 //irma
 
 //yuni
+// Route::get('/pkm', function () {
+//     return view('pkm.index');
+// });
+
 Route::get('/pkm', [PkmController::class, 'index'])->name('index');
 Route::get('/pkm/tambah', [PkmController::class, 'create'])->name('pkm.create');
 Route::post('/pkm/tambah', [PkmController::class, 'store'])->name('pkm.store');
-Route::post('/pkm/edit', [PkmController::class, 'store'])->name('pkm.edit');
-// Route::delete('/pkm/{id_pkm}', [PkmController::class, 'destroy'])->name('pkm.destroy');
+// Route::post('/pkm/edit', [PkmController::class, 'store'])->name('pkm.edit');
 Route::delete('/pkm/{id}', [PkmController::class, 'destroy'])->name('pkm.destroy');
 Route::get('/pkm', [PkmController::class, 'index'])->name('pkm.index');
 Route::get('/pkm/{id}/edit', [PkmController::class, 'edit'])->name('pkm.edit');
 Route::put('/pkm/{id}', [PkmController::class, 'update'])->name('pkm.update');
+Route::get('/pkm/{id}', [PkmController::class, 'show'])->name('pkm.show');
+// Route::delete('/pkm/{id_pkm}', [PkmController::class, 'destroy'])->name('pkm.destroy');
 //
 
 //isna

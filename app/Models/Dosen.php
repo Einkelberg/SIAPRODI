@@ -13,16 +13,10 @@ class Dosen extends Model
 
     protected $primaryKey = 'id_dosen';
 
-    protected $fillable = [
+   protected $fillable = [
         'nidn',
-        'nip',
         'nama_dosen',
-        'alamat',
-        'no_telp',
         'jabatan_fungsional',
-        'pangkat',
-        'golongan',
         'no_serdos',
-        'status_dosen',
     ];
 }

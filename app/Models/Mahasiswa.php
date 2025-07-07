@@ -17,13 +17,16 @@ class Mahasiswa extends Model
         'nim',
         'nama_mahasiswa',
         'no_hp',
-        'no_ortu',
         'alamat',
         'tahun_masuk',
         'status_aktif',
     ];
 
-
+    public function tahunMasuk()
+    {
+        return $this->belongsTo(TahunAkademik::class, 'tahun_masuk');
+    }
+    
     public function tahunAkademik()
     {
         return $this->belongsTo(TahunAkademik::class, 'tahun_masuk', 'id_tahun_akademik');
