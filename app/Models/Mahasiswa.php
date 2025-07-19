@@ -31,7 +31,7 @@ class Mahasiswa extends Model
     {
         return $this->belongsTo(TahunAkademik::class, 'tahun_masuk', 'id_tahun_akademik');
     }
-    public function getTahunAkademikAttribute()
+    public function getAmbilTahunAkademikAttribute()
     {
         if ($this->tahun_masuk) {
             $tahunAwal = (int) $this->tahun_masuk;
