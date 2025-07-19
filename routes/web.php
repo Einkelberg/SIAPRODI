@@ -296,8 +296,8 @@ Route::get('/sk/search', [TahunWisudaController::class, 'search']);
 
 
 //irma
-  Route::get('/', [MahasiswaSemesterPerpanjanganController::class, 'tampil_mahasiswa_perpanjangan'])
-        ->name('index');
+//   Route::get('/', [MahasiswaSemesterPerpanjanganController::class, 'tampil_mahasiswa_perpanjangan'])
+//         ->name('index');
 
     Route::get('/maspan', [MahasiswaSemesterPerpanjanganController::class, 'tampil_mahasiswa_perpanjangan'])
     ->name('maspan.index');
