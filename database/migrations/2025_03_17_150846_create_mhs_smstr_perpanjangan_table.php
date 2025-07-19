@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('nim', 15);
             $table->text('alasan');
-            $table->text('solusi');
-            $table->string('batas_waktu');
+            $table->text('semester');
+            // $table->text('solusi');
+            // $table->string('batas_waktu');
             $table->timestamps();
         });
     }

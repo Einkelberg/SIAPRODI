@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('mhs_smstr_perpanjangan', function (Blueprint $table) {
+            // $table->renameColumn('tahun_akadamik', 'tahun_akademik');
         });
     }
 
@@ -21,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('mhs_smstr_perpanjangan', function (Blueprint $table) {
-            // $table->renameColumn('tahun_akademik', 'tahun_akadamik');
+            $table->renameColumn('tahun_akademik', 'tahun_akadamik');
         });
     }
 };

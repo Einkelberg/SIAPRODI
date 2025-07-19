@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('mhs_smstr_perpanjangan', function (Blueprint $table) {
             // $table->string('nama_mahasiswa', 100)->after('nim'); // Tambahkan kolom nama mahasiswa
-            // $table->string('status', 50)->after('nim'); // Tambahkan kolom status
+            // $table->string('status', 50)->nullable()->after('nim'); // Tambahkan kolom status
             $table->dropColumn('alasan'); // Hapus kolom alasan
         });
     }
