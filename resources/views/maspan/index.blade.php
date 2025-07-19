@@ -89,11 +89,11 @@
                     </div>
 
                     <a href="{{ route ('maspan.tambah') }}" class="btn btn-primary mb-3">
-                        <i class="fas fa-print"></i> Tambah
+                        <i class="fas fa-plus"></i> Tambah
                     </a>
 
                     <a href="/maspan/cetakmaspan" class="btn btn-warning mb-3" target="_blank">
-                        <i class="fas fa-print"></i> Cetak
+                        <i class="fas fa-eye"></i> Lihat Cetak
                     </a>
 
                     <!-- Tombol Download -->
@@ -103,67 +103,65 @@
 
                     <!-- Menampilkan Tabel -->
                     <div class="table-responsive">
-                        @if ($mahasiswaSemesterPerpanjangan->isNotEmpty())
-                            <table class="table table-striped table-bordered">
-                               <thead class="text-center bg-primary text-white">
-                                    <tr>
-                                        <th>NIM</th>
-                                        <th>Nama Mahasiswa</th>
-                                        <th>Tahun Akademik</th>
-                                        <th>Status</th>
-                                        <th>Alasan</th>
-                                        <th>Solusi</th>
-                                        <th>Batas Waktu</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    @foreach ($mahasiswaSemesterPerpanjangan as $data_mahasiswa)
+                            @if ($mahasiswaSemesterPerpanjangan->isNotEmpty())
+                                <table class="table table-striped table-bordered">
+                                    <thead class="text-center bg-primary text-white">
                                         <tr>
-                                            <td class="text-center">{{ $data_mahasiswa->nim }}</td>
-                                            <td>{{ $data_mahasiswa->mahasiswa?->nama_mahasiswa }}</td>
-                                            <td class="text-center">{{ $data_mahasiswa->mahasiswa?->tahun_masuk }}</td>
-                                            
-                                            <!-- Status dengan Warna -->
-                                            <td class="text-center">
-                                                @if ($data_mahasiswa->mahasiswa?->status_aktif === 'Aktif')
-                                                    <span class="badge bg-success status-badge">Aktif</span>
-                                                @else
-                                                    <span class="badge bg-danger status-badge">Tidak Aktif</span>
-                                                @endif
-                                            </td>
-
-                                            <td>{{ $data_mahasiswa->alasan }}</td>
-                                            <td>{{ $data_mahasiswa->solusi }}</td>
-                                            <td>{{ $data_mahasiswa->batas_waktu }}</td>
-                                            <td>
-                                                <div class="aksi-buttons d-flex flex-column">
-                                                    <!-- Tombol Edit dengan margin bawah -->
-                                                    <a href="{{ route('maspan.edit', $data_mahasiswa->id) }}" class="btn btn-warning btn-sm mb-2">
-                                                        <i class="fas fa-edit"></i> Edit
-                                                    </a>
-                                                
-                                                    <!-- Form Hapus -->
-                                                    <form action="{{ route('maspan.destroy', $data_mahasiswa->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-trash-alt"></i> Hapus
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                                
-                                            </td>
-                                            
+                                            <th>NO.</th> <!-- Tambahan kolom NO. -->
+                                            <th>NIM</th>
+                                            <th>Nama Mahasiswa</th>
+                                            <th>Tahun Akademik</th>
+                                            <th>Status</th>
+                                            <th>Semester</th>
+                                            <th>Alasan</th>
+                                            <th>Solusi</th>
+                                            <th>Batas Waktu</th>
+                                            <th>Aksi</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        @else
-                            <p class="text-center text-muted">Tidak ada data mahasiswa semester perpanjangan.</p>
-                        @endif
-                    </div>
+                                    </thead>
+
+                                    <tbody>
+                                        @foreach ($mahasiswaSemesterPerpanjangan as $data_mahasiswa)
+                                            <tr>
+                                                <td class="text-center">{{ $loop->iteration }}</td> <!-- Nomor urut -->
+                                                <td class="text-center">{{ $data_mahasiswa->nim }}</td>
+                                                <td>{{ $data_mahasiswa->mahasiswa?->nama_mahasiswa }}</td>
+                                                <td class="text-center">{{ $data_mahasiswa->mahasiswa?->tahun_akademik }}</td>
+
+                                                <!-- Status dengan Warna -->
+                                                <td class="text-center">
+                                                    @if ($data_mahasiswa->mahasiswa?->status_aktif === 'Aktif')
+                                                        <span class="badge bg-success status-badge">Aktif</span>
+                                                    @endif
+                                                </td>
+
+                                                <td>{{ $data_mahasiswa->semester }}</td>
+                                                <td>{{ $data_mahasiswa->alasan }}</td>
+                                                <td>{{ $data_mahasiswa->solusi }}</td>
+                                                <td>{{ $data_mahasiswa->batas_waktu }}</td>
+                                                <td>
+                                                    <div class="aksi-buttons d-flex flex-column">
+                                                        <a href="{{ route('maspan.edit', $data_mahasiswa->id) }}" class="btn btn-warning btn-sm mb-2">
+                                                            <i class="fas fa-edit"></i> Edit
+                                                        </a>
+
+                                                        <form action="{{ route('maspan.destroy', $data_mahasiswa->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fas fa-trash-alt"></i> Hapus
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <p class="text-center text-muted">Tidak ada data mahasiswa semester perpanjangan.</p>
+                            @endif
+                        </div>
 
                 </div>
             </div>

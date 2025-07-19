@@ -27,6 +27,15 @@
                                 <input type="hidden" name="angkatan" value="{{ old('angkatan', $mahasiswaPerpanjangan->mahasiswa->angkatan) }}">
                                 <input type="hidden" name="status" value="{{ old('status', $mahasiswaPerpanjangan->mahasiswa->status) }}">
 
+                                <!-- Semester -->
+                                <div class="mb-4">
+                                    <label for="semester" class="form-label fw-bold text-secondary">Semester</label>
+                                    <textarea class="form-control @error('semester') is-invalid @enderror rounded-3" id="semester" name="semester" rows="3" placeholder="Masukkan semester mahasiswa..." required>{{ old('semester', $mahasiswaPerpanjangan->semester) }}</textarea>
+                                    @error('semester')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                                 <!-- Alasan -->
                                 <div class="mb-4">
                                     <label for="alasan" class="form-label fw-bold text-secondary">Alasan</label>

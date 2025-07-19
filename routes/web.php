@@ -296,22 +296,31 @@ Route::get('/sk/search', [TahunWisudaController::class, 'search']);
 
 
 //irma
-  Route::get('/maspan', [MahasiswaSemesterPerpanjanganController::class, 'tampil_mahasiswa_perpanjangan'])
+  Route::get('/', [MahasiswaSemesterPerpanjanganController::class, 'tampil_mahasiswa_perpanjangan'])
+        ->name('index');
+
+    Route::get('/maspan', [MahasiswaSemesterPerpanjanganController::class, 'tampil_mahasiswa_perpanjangan'])
     ->name('maspan.index');
 
     Route::get('/search', [MahasiswaSemesterPerpanjanganController::class, 'search'])
         ->name('maspan.search');
 
+    Route::get('/maspan/tambah', [MahasiswaSemesterPerpanjanganController::class, 'tampiltambah']) 
+    -> name ('maspan.tambah');
+
+     Route::post('/maspan/simpan', [MahasiswaSemesterPerpanjanganController::class, 'store']) 
+    -> name ('maspan.simpan');
+  
     Route::get('/maspan/{id}/edit', [MahasiswaSemesterPerpanjanganController::class, 'edit'])
         ->name('maspan.edit'); // Sesuai dengan yang dipakai di Blade
 
     Route::put('/{id}', [MahasiswaSemesterPerpanjanganController::class, 'update'])
         ->name('amspan.update');
-
+    
     Route::delete('/{id}', [MahasiswaSemesterPerpanjanganController::class, 'destroy'])
         ->name('maspan.destroy');
 
-
+   
     Route::put('/maspan/{id}', [MahasiswaSemesterPerpanjanganController::class, 'update'])->name('maspan.update'); // Untuk menyimpan perubahan
 
     Route::get('maspan/exportpdf', [MahasiswaSemesterPerpanjanganController::class, 'exportpdf']); //cetak pdf
@@ -319,26 +328,8 @@ Route::get('/sk/search', [TahunWisudaController::class, 'search']);
 
 // ✅ Gunakan prefix 'maspan' untuk mengelompokkan route
     Route::prefix('maspan')->name('maspan.')->group(function () {
+        
 
-    // Route::get('/', [MahasiswaSemesterPerpanjanganController::class, 'tampil_mahasiswa_perpanjangan'])
-    //     ->name('index');
-
-    // Route::get('/maspan', [MahasiswaSemesterPerpanjanganController::class, 'tampil_mahasiswa_perpanjangan'])
-    // ->name('maspan');
-
-    // Route::get('/search', [MahasiswaSemesterPerpanjanganController::class, 'search'])
-    //     ->name('search');
-
-    // Route::get('/maspan/{id}/edit', [MahasiswaSemesterPerpanjanganController::class, 'edit'])
-    //     ->name('maspan.edit'); // Sesuai dengan yang dipakai di Blade
-
-    // Route::put('/{id}', [MahasiswaSemesterPerpanjanganController::class, 'update'])
-    //     ->name('update');
-
-    // Route::delete('/{id}', [MahasiswaSemesterPerpanjanganController::class, 'destroy'])
-    //     ->name('destroy');
-
-    // Route::put('/maspan/{id}', [MahasiswaSemesterPerpanjanganController::class, 'update'])->name('maspan.update'); // Untuk menyimpan perubahan
 });
 //irma
 

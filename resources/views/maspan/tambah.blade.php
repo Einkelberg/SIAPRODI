@@ -27,6 +27,15 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                
+                                <!-- Semester -->
+                                <div class="mb-4">
+                                    <label for="semester" class="form-label fw-bold text-secondary">Semester</label>
+                                    <input type="text" class="form-control @error('semester') is-invalid @enderror rounded-3" id="semester" name="semester" value="{{ old('semester') }}" placeholder="Masukkan semester mahasiswa..." required>
+                                    @error('semester')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
                                 <!-- Alasan -->
                                 <div class="mb-4">

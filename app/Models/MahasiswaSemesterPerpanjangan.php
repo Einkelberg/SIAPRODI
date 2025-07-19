@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MahasiswaSemesterPerpanjangan extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     protected $table = 'mhs_smstr_perpanjangan'; // Nama tabel di database
 
