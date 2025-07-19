@@ -33,6 +33,7 @@
                 <th>No</th>
                 <th>NIM</th>
                 <th>Nama</th>
+                <th>Semester</th>
                 <th>Status Wisuda</th>
                 <th>Tahun Wisuda</th>
                 <th>Aksi</th>
@@ -44,6 +45,7 @@
               <td>{{ $loop->iteration }}</td>
               <td>{{ $wis->nim }}</td>
               <td>{{ $wis->tampilMahasiswa->nama_mahasiswa }}</td>
+              <td>{{ $wis->semester }}</td>
               <td>{{ $wis->status_wisuda }}</td>
               <td>{{ $wis->tahun_wisuda }}</td>
               <td>{{ $wis->nim }}</td>
