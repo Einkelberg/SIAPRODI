@@ -48,6 +48,7 @@
                                         <th>Tanggal Mulai</th>
                                         <th>Tanggal Selesai</th>
                                         <th>File SK</th>
+                                        <th>No SK</th>
                                         <th>Keterangan</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -66,6 +67,7 @@
                                             <i class="fas fa-file-alt"></i> Lihat File
                                             </a>
                                         </td>
+                                        <td>{{ $kds->nomor_sk }}</td>
                                         <td>{{ $kds->keterangan }}</td>
                                         <td>
                                             @php
